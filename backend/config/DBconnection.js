@@ -1,14 +1,13 @@
+require("dotenv").config();
 const mongoose = require("mongoose");
 
 const connectDB = async () => {
   try {
-    await mongoose.connect(
-      "mongodb+srv://faizan:faizan880@cluster0.l012v.mongodb.net/MealPlannerDB"
-    );
+    await mongoose.connect(process.env.MONGODB_URI);
     console.log("MongoDB Connected");
   } catch (err) {
     console.error("MongoDB Connection Error:", err);
-    process.exit(1); // Stop the app on failure
+    process.exit(1);
   }
 };
 
