@@ -7,8 +7,6 @@ const {
   deleteUser,
 } = require("../controllers/userController");
 
-// const authenticateUser = require("../middleware/authMiddleware");
-
 // (C) Create user
 router.post("/create-user", createUser);
 
