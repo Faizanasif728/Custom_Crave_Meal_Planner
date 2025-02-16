@@ -1,7 +1,6 @@
 const User = require("../models/users");
-const bcrypt = require("bcrypt");
-const { v4: uuidv4 } = require("uuid"); // Import uuid
-const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs"); // Use bcryptjs consistently
+const { v4: uuidv4 } = require("uuid");
 
 // Email validation regex
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -9,7 +8,7 @@ const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 // Password validation regex (Min 8 chars, 1 uppercase, 1 lowercase, 1 number, 1 special char)
 const passwordRegex =
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-// _______________________________________________________________________________________________
+
 // Create a new user
 exports.createUser = async (req, res) => {
   try {
@@ -51,10 +50,10 @@ exports.createUser = async (req, res) => {
       .status(201)
       .json({ message: "User created successfully", user: newUser });
   } catch (error) {
-    res.status(500).json({ message: "Error creating user", error });
+    console.error(error);
+    res.status(500).json({ message: "Error creating user" });
   }
 };
-// _____________________________________________________________________________________
 
 // Get user profile by username or email
 exports.getUserProfile = async (req, res) => {
@@ -64,7 +63,9 @@ exports.getUserProfile = async (req, res) => {
     if (!username && !email) {
       return res
         .status(400)
-        .json({ message: "Please provide a username or email" });
+        .json({
+          message: "Please provide a username or email to search for the user.",
+        });
     }
 
     // Find user based on username or email (excluding password)
@@ -78,12 +79,12 @@ exports.getUserProfile = async (req, res) => {
 
     res.status(200).json({ user });
   } catch (error) {
-    res.status(500).json({ message: "Error fetching user profile", error });
+    console.error(error);
+    res.status(500).json({ message: "Error fetching user profile" });
   }
 };
-// _____________________________________________________________________________________________
 
-// Update user profile (Safe Approach)
+// Update user profile
 exports.updateUserProfile = async (req, res) => {
   try {
     const { username, currentPassword, newUsername, newEmail } = req.body;
@@ -130,11 +131,10 @@ exports.updateUserProfile = async (req, res) => {
       },
     });
   } catch (error) {
-    res.status(500).json({ message: "Error updating user profile", error });
+    console.error(error);
+    res.status(500).json({ message: "Error updating user profile" });
   }
 };
-
-// ___________________________________________________________________________________________
 
 // Delete User
 exports.deleteUser = async (req, res) => {
@@ -158,7 +158,7 @@ exports.deleteUser = async (req, res) => {
 
     res.status(200).json({ message: "User deleted successfully" });
   } catch (error) {
-    res.status(500).json({ message: "Error deleting user", error });
+    console.error(error);
+    res.status(500).json({ message: "Error deleting user" });
   }
 };
-// _________________________________________________________________________________________
