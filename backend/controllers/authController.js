@@ -34,13 +34,9 @@ exports.login = async (req, res) => {
     }
 
     // Generate JWT token
-    const token = jwt.sign(
-      { userId: user.userId, email: user.email },
-      process.env.SECRET,
-      {
-        expiresIn: "15d",
-      }
-    );
+    const token = jwt.sign({ email: user.email }, process.env.SECRET, {
+      expiresIn: "15d",
+    });
 
     // Set authentication cookie
     res.cookie("auth", token, {

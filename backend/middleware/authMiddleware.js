@@ -14,7 +14,7 @@ const middleware = (req, res, next) => {
       if (error) {
         return res.status(403).json({ error: "Forbidden: Invalid token" });
       }
-      req.user = data;
+      req.user = { _id: data._id, email: data.email };
       next();
     });
   } catch (error) {

@@ -1,6 +1,6 @@
 const User = require("../models/users");
 const bcrypt = require("bcryptjs"); // Use bcryptjs consistently
-const { v4: uuidv4 } = require("uuid");
+// const { v4: uuidv4 } = require("uuid");
 
 // Email validation regex
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -39,7 +39,7 @@ exports.createUser = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = new User({
-      userId: uuidv4(), // Generate unique userId
+      // userId: uuidv4(), // Generate unique userId
       username,
       email,
       password: hashedPassword,
@@ -61,11 +61,9 @@ exports.getUserProfile = async (req, res) => {
     const { username, email } = req.query;
 
     if (!username && !email) {
-      return res
-        .status(400)
-        .json({
-          message: "Please provide a username or email to search for the user.",
-        });
+      return res.status(400).json({
+        message: "Please provide a username or email to search for the user.",
+      });
     }
 
     // Find user based on username or email (excluding password)
