@@ -36,6 +36,17 @@ const Navbar = () => {
               </li>
             )
           )}
+          {/* ✅ Add Signup & Login Links */}
+          <li>
+            <Link to="/signup" className="text-blue-600 hover:text-blue-900">
+              Signup
+            </Link>
+          </li>
+          <li>
+            <Link to="/login" className="text-blue-600 hover:text-blue-900">
+              Login
+            </Link>
+          </li>
         </ul>
 
         {/* Mobile Dropdown */}
@@ -58,6 +69,25 @@ const Navbar = () => {
                 </li>
               )
             )}
+            {/* ✅ Add Signup & Login Links to Mobile Menu */}
+            <li className="p-3 border-b">
+              <Link
+                to="/signup"
+                className="text-blue-600 hover:text-blue-900"
+                onClick={() => setIsOpen(false)}
+              >
+                Signup
+              </Link>
+            </li>
+            <li className="p-3">
+              <Link
+                to="/login"
+                className="text-blue-600 hover:text-blue-900"
+                onClick={() => setIsOpen(false)}
+              >
+                Login
+              </Link>
+            </li>
           </ul>
         )}
       </div>
