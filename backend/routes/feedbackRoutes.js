@@ -9,6 +9,6 @@ const middleware = require("../middleware/authMiddleware");
 router.post("/submit", middleware, submitFeedback);
 
 // Get all feedbacks (for admin)
-router.get("/all", middleware, getFeedbacks);
+router.get("/all", getFeedbacks);
 
 module.exports = router;
