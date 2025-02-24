@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -19,53 +20,79 @@ const Signup = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="bg-white p-6 rounded-lg shadow-lg w-96">
-        <h2 className="text-2xl font-bold mb-4 text-center">
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 px-4">
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
+        className="bg-gradient-to-r from-gray-800 to-gray-700 p-8 rounded-2xl shadow-2xl w-full max-w-md"
+      >
+        {/* Heading */}
+        <h2 className="text-3xl font-extrabold mb-6 text-center text-white">
           Create an Account
         </h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <input
-            type="text"
-            name="name"
-            placeholder="Username"
-            value={formData.name}
-            onChange={handleChange}
-            className="w-full px-4 py-2 border rounded-md"
-            required
-          />
-          <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            value={formData.email}
-            onChange={handleChange}
-            className="w-full px-4 py-2 border rounded-md"
-            required
-          />
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            value={formData.password}
-            onChange={handleChange}
-            className="w-full px-4 py-2 border rounded-md"
-            required
-          />
-          <button
+
+        {/* Signup Form */}
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="relative">
+            <input
+              type="text"
+              name="name"
+              placeholder="Username"
+              value={formData.name}
+              onChange={handleChange}
+              className="w-full px-4 py-3 text-white bg-transparent border border-gray-500 rounded-md focus:border-blue-500 focus:ring-2 focus:ring-blue-400 transition-all outline-none"
+              required
+            />
+          </div>
+          <div className="relative">
+            <input
+              type="email"
+              name="email"
+              placeholder="Email"
+              value={formData.email}
+              onChange={handleChange}
+              className="w-full px-4 py-3 text-white bg-transparent border border-gray-500 rounded-md focus:border-blue-500 focus:ring-2 focus:ring-blue-400 transition-all outline-none"
+              required
+            />
+          </div>
+          <div className="relative">
+            <input
+              type="password"
+              name="password"
+              placeholder="Password"
+              value={formData.password}
+              onChange={handleChange}
+              className="w-full px-4 py-3 text-white bg-transparent border border-gray-500 rounded-md focus:border-blue-500 focus:ring-2 focus:ring-blue-400 transition-all outline-none"
+              required
+            />
+          </div>
+
+          {/* Animated Sign Up Button */}
+          <motion.button
+            whileHover={{
+              scale: 1.05,
+              boxShadow: "0px 0px 15px rgba(59,130,246,0.5)",
+            }}
+            whileTap={{ scale: 0.95 }}
             type="submit"
-            className="w-full bg-blue-600 text-white py-2 rounded-md"
+            className="w-full py-3 rounded-md shadow-lg text-white text-lg font-semibold bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-indigo-600 hover:to-blue-600 transition-all duration-300 focus:ring-4 focus:ring-blue-400"
           >
             Sign Up
-          </button>
+          </motion.button>
         </form>
-        <p className="mt-4 text-center text-sm">
+
+        {/* Login Link */}
+        <p className="mt-4 text-center text-gray-300">
           Already have an account?{" "}
-          <Link to="/login" className="text-blue-600">
+          <Link
+            to="/login"
+            className="text-blue-400 hover:text-blue-300 font-semibold"
+          >
             Login
           </Link>
         </p>
-      </div>
+      </motion.div>
     </div>
   );
 };
