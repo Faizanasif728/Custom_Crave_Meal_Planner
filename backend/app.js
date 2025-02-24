@@ -8,6 +8,7 @@ var connectDB = require("./config/DBconnection"); // Import the DB connection
 // var indexRouter = require("./routes/index");
 var userRoutes = require("./routes/userRoutes");
 var authRoutes = require("./routes/authRoutes");
+var mealplanRoutes = require("./routes/mealplanRoutes");
 
 var app = express();
 
@@ -26,9 +27,11 @@ app.use(cookieParser());
 // app.use("/", indexRouter);
 app.use("/api/users", userRoutes);
 app.use("/api/auth", authRoutes);
+app.use("./api/mealplan", mealplanRoutes);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
+  m;
   next(createError(404));
 });
 

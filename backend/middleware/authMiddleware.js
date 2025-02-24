@@ -1,26 +1,31 @@
-require("dotenv").config();
-const { verify } = require("jsonwebtoken");
+const jwt = require("jsonwebtoken");
+const User = require("../models/users"); // Import User model
 
-const middleware = (req, res, next) => {
+const authMiddleware = async (req, res, next) => {
+  const token = req.header("Authorization")?.split(" ")[1];
+
+  if (!token) {
+    return res
+      .status(401)
+      .json({ message: "Access denied. No token provided." });
+  }
+
   try {
-    const authHeader = req.headers["authorization"];
-    const token = authHeader && authHeader.split(" ")[1];
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    console.log("✅ Decoded Token:", decoded);
 
-    if (!token) {
-      return res.status(401).json({ error: "Unauthorized: No token provided" });
+    const user = await User.findById(decoded.id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
     }
 
-    verify(token, process.env.SECRET, (error, data) => {
-      if (error) {
-        return res.status(403).json({ error: "Forbidden: Invalid token" });
-      }
-      req.user = { _id: data._id, email: data.email };
-      next();
-    });
+    req.user = user; // Attach user to request
+    console.log("✅ Authenticated User:", req.user.id);
+    next();
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Internal server error" });
+    console.error("❌ Authentication Error:", error);
+    res.status(400).json({ message: "Invalid token" });
   }
 };
 
-module.exports = middleware;
+module.exports = authMiddleware;
