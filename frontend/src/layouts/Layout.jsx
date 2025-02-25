@@ -5,19 +5,19 @@ import Footer from "../components/Footer";
 const Layout = ({ children }) => {
   return (
     <div
-      className="relative min-h-screen bg-cover bg-center"
+      className="relative min-h-screen bg-cover bg-center bg-no-repeat"
       style={{
-        backgroundImage: "url('/assets/meal-bg.jpg')", // Ensure the correct path
+        backgroundImage: "url('/assets/meal-bg.jpg')", // Updated background image
       }}
     >
       {/* Background Overlay */}
-      <div className="absolute inset-0 bg-black opacity-50"></div>
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
 
       {/* Navbar */}
       <Navbar />
 
       {/* Page Content */}
-      <main className="relative z-10 pt-16">{children}</main>
+      <main className="relative z-10 pt-20 pb-16">{children}</main>
 
       {/* Footer */}
       <Footer />

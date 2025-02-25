@@ -12,7 +12,7 @@ const Footer = () => {
             to="/"
             className="text-3xl font-extrabold text-white tracking-wide hover:opacity-80 transition"
           >
-            <span className="bg-gradient-to-r from-blue-400 to-purple-600 text-transparent bg-clip-text">
+            <span className="bg-gradient-to-r from-purple-400 to-blue-500 text-transparent bg-clip-text">
               Custom Crave
             </span>
           </Link>

@@ -6,14 +6,14 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <nav className="fixed top-0 left-0 w-full z-50 bg-white/10 backdrop-blur-lg shadow-lg">
+    <nav className="fixed top-0 left-0 w-full z-50 bg-black/50 backdrop-blur-lg shadow-lg">
       <div className="container mx-auto px-6 py-4 flex justify-between items-center">
         {/* Logo */}
         <Link
           to="/"
-          className="text-3xl font-extrabold text-white tracking-wide"
+          className="text-3xl font-extrabold text-white tracking-wide hover:opacity-80 transition"
         >
-          <span className="bg-gradient-to-r from-blue-400 to-purple-600 text-transparent bg-clip-text">
+          <span className="bg-gradient-to-r from-purple-400 to-blue-500 text-transparent bg-clip-text">
             CustomCrave
           </span>
         </Link>
@@ -48,7 +48,7 @@ const Navbar = () => {
           <li>
             <Link
               to="/signup"
-              className="px-6 py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-full shadow-lg transform hover:scale-105 transition duration-300"
+              className="px-6 py-2 bg-gradient-to-r from-purple-600 to-blue-500 text-white rounded-full shadow-lg transform hover:scale-105 transition duration-300"
             >
               Signup
             </Link>
@@ -56,7 +56,7 @@ const Navbar = () => {
           <li>
             <Link
               to="/login"
-              className="px-6 py-2 bg-gradient-to-r from-purple-600 to-blue-500 text-white rounded-full shadow-lg transform hover:scale-105 transition duration-300"
+              className="px-6 py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-full shadow-lg transform hover:scale-105 transition duration-300"
             >
               Login
             </Link>
@@ -88,7 +88,7 @@ const Navbar = () => {
           <li className="p-4">
             <Link
               to="/signup"
-              className="block text-center text-white bg-gradient-to-r from-blue-500 to-purple-600 py-2 rounded-full shadow-lg transform hover:scale-105 transition duration-300"
+              className="block text-center text-white bg-gradient-to-r from-purple-600 to-blue-500 py-2 rounded-full shadow-lg transform hover:scale-105 transition duration-300"
               onClick={() => setIsOpen(false)}
             >
               Signup
@@ -97,7 +97,7 @@ const Navbar = () => {
           <li className="p-4">
             <Link
               to="/login"
-              className="block text-center text-white bg-gradient-to-r from-purple-600 to-blue-500 py-2 rounded-full shadow-lg transform hover:scale-105 transition duration-300"
+              className="block text-center text-white bg-gradient-to-r from-blue-500 to-purple-600 py-2 rounded-full shadow-lg transform hover:scale-105 transition duration-300"
               onClick={() => setIsOpen(false)}
             >
               Login
