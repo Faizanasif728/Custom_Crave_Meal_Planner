@@ -1,33 +1,30 @@
+const { v4: uuidv4 } = require("uuid"); // Import UUID generator
+require("dotenv").config();
 const User = require("../models/users");
-const bcrypt = require("bcryptjs"); // Use bcryptjs consistently
-const { v4: uuidv4 } = require("uuid");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
-// Email validation regex
+// Email & Password Validation
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-// Password validation regex (Min 8 chars, 1 uppercase, 1 lowercase, 1 number, 1 special char)
 const passwordRegex =
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
-// Create a new user
+// ✅ Create User
 exports.createUser = async (req, res) => {
   try {
     const { username, email, password } = req.body;
 
-    // Validate email format
     if (!emailRegex.test(email)) {
       return res.status(400).json({ message: "Invalid email format" });
     }
 
-    // Validate password strength
     if (!passwordRegex.test(password)) {
       return res.status(400).json({
         message:
-          "Password must be at least 8 characters long, include one uppercase letter, one lowercase letter, one number, and one special character.",
+          "Password must be at least 8 characters, with one uppercase letter, one number, and one special character.",
       });
     }
 
-    // Check if email or username already exists
     const existingUser = await User.findOne({ $or: [{ email }, { username }] });
     if (existingUser) {
       return res
@@ -35,41 +32,37 @@ exports.createUser = async (req, res) => {
         .json({ message: "Username or Email already taken" });
     }
 
-    // Hash password before saving
-    const hashedPassword = await bcrypt.hash(password, 10);
-
     const newUser = new User({
-      userId: uuidv4(), // Generate unique userId
+      userId: uuidv4(), // Generate UUID for userId
       username,
       email,
-      password: hashedPassword,
+      password,
     });
 
     await newUser.save();
-    res
-      .status(201)
-      .json({ message: "User created successfully", user: newUser });
+
+    const token = jwt.sign(
+      { userId: newUser.userId, email: newUser.email, _id: newUser._id },
+      process.env.JWT_SECRET,
+      { expiresIn: "15d" }
+    );
+
+    res.status(201).json({ message: "User created successfully", token });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Error creating user" });
   }
 };
 
-// Get user profile by username or email
+// ✅ Get User Profile (Authenticated)
 exports.getUserProfile = async (req, res) => {
   try {
-    const { username, email } = req.query;
+    const { userId } = req.user;
 
-    if (!username && !email) {
-      return res.status(400).json({
-        message: "Please provide a username or email to search for the user.",
-      });
-    }
-
-    // Find user based on username or email (excluding password)
-    const user = await User.findOne({ $or: [{ username }, { email }] }).select(
-      "-password"
-    );
+    // Support both userId and _id
+    const user = await User.findOne({
+      $or: [{ _id: userId }, { userId }],
+    }).select("-password");
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
@@ -82,29 +75,30 @@ exports.getUserProfile = async (req, res) => {
   }
 };
 
-// Update user profile
+// ✅ Update User Profile (Authenticated)
 exports.updateUserProfile = async (req, res) => {
   try {
-    const { username, currentPassword, newUsername, newEmail } = req.body;
+    const { userId } = req.user;
+    const { currentPassword, newUsername, newEmail } = req.body;
 
-    // Find user by username
-    let user = await User.findOne({ username });
+    // Support both userId and _id
+    const user = await User.findOne({
+      $or: [{ _id: userId }, { userId }],
+    });
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // Verify current password before updating
     const isMatch = await bcrypt.compare(currentPassword, user.password);
     if (!isMatch) {
       return res.status(400).json({ message: "Incorrect password" });
     }
 
-    // Check if new username or email is already taken
     if (newUsername && newUsername !== user.username) {
       const existingUsername = await User.findOne({ username: newUsername });
       if (existingUsername) {
-        return res.status(400).json({ message: "Username is already taken" });
+        return res.status(400).json({ message: "Username already taken" });
       }
       user.username = newUsername;
     }
@@ -112,21 +106,16 @@ exports.updateUserProfile = async (req, res) => {
     if (newEmail && newEmail !== user.email) {
       const existingEmail = await User.findOne({ email: newEmail });
       if (existingEmail) {
-        return res.status(400).json({ message: "Email is already taken" });
+        return res.status(400).json({ message: "Email already taken" });
       }
       user.email = newEmail;
     }
 
-    // Save updated user data
     await user.save();
 
     res.status(200).json({
-      message: "User profile updated successfully",
-      user: {
-        username: user.username,
-        email: user.email,
-        updatedAt: user.updatedAt,
-      },
+      message: "Profile updated successfully",
+      user: { username: user.username, email: user.email },
     });
   } catch (error) {
     console.error(error);
@@ -134,25 +123,27 @@ exports.updateUserProfile = async (req, res) => {
   }
 };
 
-// Delete User
+// ✅ Delete User (Authenticated)
 exports.deleteUser = async (req, res) => {
   try {
-    const { username, currentPassword } = req.body;
+    const { userId } = req.user;
+    const { currentPassword } = req.body;
 
-    // Check if the user exists
-    const user = await User.findOne({ username });
+    // Support both userId and _id
+    const user = await User.findOne({
+      $or: [{ _id: userId }, { userId }],
+    });
+
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // Verify current password
     const isMatch = await bcrypt.compare(currentPassword, user.password);
     if (!isMatch) {
       return res.status(400).json({ message: "Incorrect password" });
     }
 
-    // Delete user
-    await User.deleteOne({ username });
+    await User.deleteOne({ $or: [{ _id: userId }, { userId }] });
 
     res.status(200).json({ message: "User deleted successfully" });
   } catch (error) {
