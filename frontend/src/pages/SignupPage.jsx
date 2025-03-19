@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import axios from "axios"; // Import axios for API calls
+import axios from "../api";
+import { toast } from "react-toastify"; // Import Toast
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -9,42 +10,42 @@ const Signup = () => {
     email: "",
     password: "",
   });
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-  const [error, setError] = useState(""); // State for error messages
-  const [loading, setLoading] = useState(false); // State to track API call
-  const navigate = useNavigate(); // For redirecting after successful signup
-
-  // Handle input changes and update state
+  // Handle input change
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Handle form submission
+  // Handle form submit
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(""); // Clear previous errors
-    setLoading(true); // Set loading state
+    setLoading(true);
 
     try {
-      // Send signup request to backend
-      const response = await axios.post(
+      const { data } = await axios.post(
         "http://localhost:3000/api/users/create-user",
-        formData
+        formData,
+        { withCredentials: true }
       );
 
-      if (response.data.token) {
-        localStorage.setItem("token", response.data.token);
-        navigate("/"); // Redirect to home page
+      console.log("API Response:", data); // Log the API response for debugging
+
+      if (data?.success) {
+        toast.success(" User registered successfully! Please login.");
+        setFormData({ username: "", email: "", password: "" }); // Clear input fields
+        navigate("/login"); // Redirect immediately
       } else {
-        setError("Signup failed. Please try again.");
+        toast.error(data?.message || "Signup failed. Please try again.");
       }
     } catch (err) {
-      console.error("Signup error:", err.response || err);
-      setError(
-        err.response?.data?.message || "An error occurred. Please try again."
-      );
+      console.error("Error:", err);
+      const message =
+        err.response?.data?.message || "Signup failed. Please try again.";
+      toast.error(message);
     } finally {
-      setLoading(false); // Reset loading state
+      setLoading(false);
     }
   };
 
@@ -56,19 +57,10 @@ const Signup = () => {
         transition={{ duration: 0.5, ease: "easeOut" }}
         className="bg-gradient-to-r from-gray-800 to-gray-700 p-8 rounded-2xl shadow-2xl w-full max-w-md"
       >
-        {/* Heading */}
         <h2 className="text-3xl font-extrabold mb-6 text-center text-white">
           Create an Account
         </h2>
 
-        {/* Display error message */}
-        {error && (
-          <div className="mb-4 p-3 bg-red-500/20 text-red-300 rounded-md text-sm">
-            {error}
-          </div>
-        )}
-
-        {/* Signup Form */}
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="relative">
             <label className="block text-gray-300 font-semibold mb-1">
@@ -77,11 +69,11 @@ const Signup = () => {
             <input
               type="text"
               name="username"
-              placeholder="Enter your username"
+              placeholder="Enter your username here"
               value={formData.username}
               onChange={handleChange}
-              className="w-full px-4 py-3 text-white bg-transparent border border-gray-500 rounded-md focus:border-blue-500 focus:ring-2 focus:ring-blue-400 transition-all outline-none"
               required
+              className="w-full px-4 py-3 text-white bg-transparent border border-gray-500 rounded-md focus:border-blue-500 focus:ring-2 focus:ring-blue-400 transition-all outline-none"
             />
           </div>
           <div className="relative">
@@ -91,11 +83,11 @@ const Signup = () => {
             <input
               type="email"
               name="email"
-              placeholder="Enter your email"
+              placeholder="Enter your email here"
               value={formData.email}
               onChange={handleChange}
-              className="w-full px-4 py-3 text-white bg-transparent border border-gray-500 rounded-md focus:border-blue-500 focus:ring-2 focus:ring-blue-400 transition-all outline-none"
               required
+              className="w-full px-4 py-3 text-white bg-transparent border border-gray-500 rounded-md focus:border-blue-500 focus:ring-2 focus:ring-blue-400 transition-all outline-none"
             />
           </div>
           <div className="relative">
@@ -105,19 +97,17 @@ const Signup = () => {
             <input
               type="password"
               name="password"
-              placeholder="Enter your password"
+              placeholder="Enter your password here"
               value={formData.password}
               onChange={handleChange}
-              className="w-full px-4 py-3 text-white bg-transparent border border-gray-500 rounded-md focus:border-blue-500 focus:ring-2 focus:ring-blue-400 transition-all outline-none"
               required
+              className="w-full px-4 py-3 text-white bg-transparent border border-gray-500 rounded-md focus:border-blue-500 focus:ring-2 focus:ring-blue-400 transition-all outline-none"
             />
             <p className="mt-2 text-sm text-gray-400">
               Password must be at least 8 characters, with one uppercase letter,
               one number, and one special character.
             </p>
           </div>
-
-          {/* Animated Sign Up Button */}
           <motion.button
             disabled={loading}
             whileHover={{
@@ -135,8 +125,6 @@ const Signup = () => {
             {loading ? "Signing up..." : "Sign Up"}
           </motion.button>
         </form>
-
-        {/* Login Link */}
         <p className="mt-4 text-center text-gray-300">
           Already have an account?{" "}
           <Link
