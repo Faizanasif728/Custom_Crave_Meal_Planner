@@ -5,6 +5,7 @@ const {
   getUserProfile,
   updateUserProfile,
   deleteUser,
+  getUserCalories,
 } = require("../controllers/userController");
 const middleware = require("../middleware/authMiddleware");
 
@@ -19,5 +20,7 @@ router.put("/update-profile", middleware, updateUserProfile);
 
 // (D) Delete user profile by username and current password
 router.delete("/delete-user", middleware, deleteUser);
+// (R) Getting calories
+router.put("/calories", middleware, getUserCalories);
 
 module.exports = router;

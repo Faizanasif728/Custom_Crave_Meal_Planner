@@ -10,6 +10,8 @@ const connectDB = require("./config/DBconnection");
 const userRoutes = require("./routes/userRoutes");
 const authRoutes = require("./routes/authRoutes");
 const feedbackRoutes = require("./routes/feedbackRoutes");
+var mealplanRoutes = require("./routes/mealplanRoutes");
+var recipeRoutes = require("./routes/recipeRoutes");
 
 const app = express();
 
@@ -18,13 +20,13 @@ connectDB();
 
 // Handle Uncaught Exceptions
 process.on("uncaughtException", (err) => {
-  console.error("🔥 Uncaught Exception:", err);
+  console.error("Uncaught Exception:", err);
   process.exit(1);
 });
 
 // Handle Unhandled Promise Rejections
 process.on("unhandledRejection", (reason, promise) => {
-  console.error("🚨 Unhandled Promise Rejection:", reason);
+  console.error("Unhandled Promise Rejection:", reason);
 });
 
 // CORS Configuration
@@ -51,6 +53,8 @@ app.use(
 app.use("/api/users", userRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/feedback", feedbackRoutes);
+app.use("/api/mealplan", mealplanRoutes);
+app.use("/api/recipes", recipeRoutes);
 
 // 404 Handler
 app.use((req, res, next) => {
@@ -59,7 +63,7 @@ app.use((req, res, next) => {
 
 // Global Error Handler
 app.use((err, req, res, next) => {
-  console.error("🚨 Error:", err.message || err);
+  console.error("Error:", err.message || err);
 
   const statusCode = err.status || 500;
   res.status(statusCode).json({
